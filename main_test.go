@@ -30,7 +30,7 @@ func Test_CheckWinner(t *testing.T) {
 		"no winner": {
 			boardPath: "boards/4.csv",
 		},
-		"no winner, streak overflow": {
+		"no winner, strike overflow": {
 			boardPath: "boards/5.csv",
 		},
 		"black wins, /": {
