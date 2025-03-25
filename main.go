@@ -93,28 +93,7 @@ func CheckRenjuWinner(board [BoardSize][BoardSize]Cell) (winner Cell, col, row i
 					continue
 				}
 
-				dx, dy := direction.DxDy()
-				consecutiveStonesCount := 1
-
-				for i := 1; i < WinStrike; i++ {
-					nextX, nextY := x+i*dx, y+i*dy
-					if board[nextX][nextY] != cell {
-						break
-					}
-					consecutiveStonesCount++
-				}
-
-				if consecutiveStonesCount != WinStrike {
-					continue
-				}
-
-				// checking for the strike overflows
-				prevX, prevY := x-dx, y-dy
-				if WithinTheBoard(prevX, prevY) && board[prevX][prevY] == cell {
-					continue
-				}
-				nextX, nextY := x+WinStrike*dx, y+WinStrike*dy
-				if WithinTheBoard(nextX, nextY) && board[nextX][nextY] == cell {
+				if !isWinStrike(board, x, y, direction) {
 					continue
 				}
 
@@ -127,4 +106,31 @@ func CheckRenjuWinner(board [BoardSize][BoardSize]Cell) (winner Cell, col, row i
 	}
 
 	return CellEmpty, 0, 0
+}
+
+// isWinStrike checks if there is a win strike starting from the cell (x, y) in the direction (dx, dy).
+// It assumes that all the cells in the strike are within the board
+func isWinStrike(board [BoardSize][BoardSize]Cell, x, y int, direction Direction) bool {
+	cell := board[x][y]
+	dx, dy := direction.DxDy()
+
+	for i := 1; i < WinStrike; i++ {
+		nextX, nextY := x+i*dx, y+i*dy
+		if board[nextX][nextY] != cell {
+			return false
+		}
+	}
+
+	// checking for the strike overflows
+	prevX, prevY := x-dx, y-dy
+	if WithinTheBoard(prevX, prevY) && board[prevX][prevY] == cell {
+		return false
+	}
+
+	nextX, nextY := x+WinStrike*dx, y+WinStrike*dy
+	if WithinTheBoard(nextX, nextY) && board[nextX][nextY] == cell {
+		return false
+	}
+
+	return true
 }
