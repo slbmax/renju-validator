@@ -114,6 +114,13 @@ func isWinStrike(board [BoardSize][BoardSize]Cell, x, y int, direction Direction
 	cell := board[x][y]
 	dx, dy := direction.DxDy()
 
+	// if the previous cell (assuming it was checked before this)
+	// is the same as the current one, it's not a win strike
+	prevX, prevY := x-dx, y-dy
+	if WithinTheBoard(prevX, prevY) && board[prevX][prevY] == cell {
+		return false
+	}
+
 	for i := 1; i < WinStrike; i++ {
 		nextX, nextY := x+i*dx, y+i*dy
 		if board[nextX][nextY] != cell {
@@ -121,12 +128,7 @@ func isWinStrike(board [BoardSize][BoardSize]Cell, x, y int, direction Direction
 		}
 	}
 
-	// checking for the strike overflows
-	prevX, prevY := x-dx, y-dy
-	if WithinTheBoard(prevX, prevY) && board[prevX][prevY] == cell {
-		return false
-	}
-
+	// checking for the strike overflow
 	nextX, nextY := x+WinStrike*dx, y+WinStrike*dy
 	if WithinTheBoard(nextX, nextY) && board[nextX][nextY] == cell {
 		return false
